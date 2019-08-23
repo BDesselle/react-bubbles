@@ -6,8 +6,6 @@ import "./styles.scss";
 import BubblePage from "./components/BubblePage";
 
 function App() {
-  /* const [colorList, setColorList] = React.useState([]); */
-
   const PrivateRoute = ({ component: Component, ...rest }) => {
     return (
       <Route
@@ -27,10 +25,6 @@ function App() {
     <Router>
       <div className="App">
         <Route exact path="/" component={Login} />
-        {/*
-          Build a PrivateRoute component that will
-          display BubblePage when you're authenticated
-        */}
         <PrivateRoute path="/bubble" component={BubblePage} />
       </div>
     </Router>
