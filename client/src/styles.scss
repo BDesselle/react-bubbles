@@ -4,10 +4,11 @@ html,
 body,
 #root,
 .App {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   padding: 0;
+  /* overflow: hidden; */
 }
 
 .App {
@@ -20,80 +21,26 @@ body,
   }
 }
 
-.spacer {
-  height: 100%;
-}
-
 .bubble-wrap {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
 }
 
-.colors-wrap {
-  height: 100%;
+div.ui.raised.segments.aside {
+  margin-bottom: 0;
+  height: 100vh;
   width: 300px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  overflow-y: auto;
 
-  ul {
-    list-style: none;
-    text-align: start;
-
-    li {
-      cursor: pointer;
-      padding: 6px 0;
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-    }
-  }
-}
-
-.delete {
-  color: rgb(216, 87, 87);
-}
-
-.color-box {
-  height: 16px;
-  width: 16px;
-  border: 1px lightgray solid;
-  margin-right: 36px;
-}
-
-form {
-  margin-top: 60px;
-  display: flex;
-  flex-direction: column;
-
-  legend {
-    padding-left: 40px;
-    font-weight: bold;
-    text-align: left;
-    text-decoration: underline;
-    margin-bottom: 16px;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
   }
 
-  label {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 36px 4px 40px;
-  }
-
-  input {
-    width: 100px;
-  }
-}
-
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 36px 0 41px;
-
-  button {
-    border: none;
-    background-color: black;
-    color: white;
-    padding: 3px 8px;
-    margin-top: 16px;
+  div.ui.raised.segment.colors-wrap {
+    margin-bottom: 0;
+    overflow-y: auto;
+    height: 92%;
   }
 }

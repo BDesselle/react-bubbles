@@ -1,5 +1,14 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from "react";
+import { axiosWithAuth } from "../helpers/axiosWithAuth";
+import {
+  Form,
+  Button,
+  Header,
+  Card,
+  Icon,
+  Divider,
+  Segment
+} from "semantic-ui-react";
 
 const initialColor = {
   color: "",
@@ -7,9 +16,8 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
-  const [editing, setEditing] = useState(false);
-  const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [editing, setEditing] = React.useState(false);
+  const [colorToEdit, setColorToEdit] = React.useState(initialColor);
 
   const editColor = color => {
     setEditing(true);
@@ -18,67 +26,115 @@ const ColorList = ({ colors, updateColors }) => {
 
   const saveEdit = e => {
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    axiosWithAuth()
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
+      .then(res => {
+        updateColors(
+          colors.map(color => {
+            if (colorToEdit.id === color.id) {
+              return colorToEdit;
+            }
+            return color;
+          })
+        );
+        setEditing(false);
+      })
+      .catch(err => console.log(err));
   };
 
   const deleteColor = color => {
-    // make a delete request to delete this color
+    axiosWithAuth()
+      .delete(`http://localhost:5000/api/colors/${colorToEdit.id}`)
+      .then(res => updateColors(colors.filter(c => c.id !== color.id)))
+      .catch(err => console.log(err));
   };
 
   return (
-    <div className="colors-wrap">
-      <p>colors</p>
-      <ul>
+    <Segment.Group raised padded floated="left" className="aside">
+      <Segment raised padded className="heading">
+        <Header as="h1" dividing>
+          <Header.Content>Colors</Header.Content>
+        </Header>
+        {editing && (
+          <Segment>
+            <Header as="h3">
+              <Header.Content>Editing Color</Header.Content>
+            </Header>
+            <Form onSubmit={saveEdit}>
+              <Form.Field>
+                <label>Color Name</label>
+                <input
+                  onChange={e =>
+                    setColorToEdit({ ...colorToEdit, color: e.target.value })
+                  }
+                  placeholder={colorToEdit.color}
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>Hex Code</label>
+                <input
+                  onChange={e =>
+                    setColorToEdit({
+                      ...colorToEdit,
+                      code: { hex: e.target.value }
+                    })
+                  }
+                  placeholder={colorToEdit.code.hex}
+                />
+              </Form.Field>
+              <Button compact icon circular color="red" floated="left">
+                <Icon
+                  color="white"
+                  onClick={() => setEditing(false)}
+                  name="cancel"
+                />
+              </Button>
+              <Button
+                type="submit"
+                compact
+                icon
+                circular
+                color="green"
+                floated="right"
+              >
+                <Icon color="white" name="save" />
+              </Button>
+            </Form>
+          </Segment>
+        )}
+      </Segment>
+      <Segment raised padded className="colors-wrap">
         {colors.map(color => (
-          <li key={color.color} onClick={() => editColor(color)}>
-            <span>
-              <span className="delete" onClick={() => deleteColor(color)}>
-                x
-              </span>{" "}
-              {color.color}
-            </span>
-            <div
-              className="color-box"
+          <>
+            <Card
+              fluid
               style={{ backgroundColor: color.code.hex }}
-            />
-          </li>
+              key={color.color}
+            >
+              <Card.Content>
+                <Button compact icon circular color="yellow" floated="left">
+                  <Icon
+                    color="white"
+                    onClick={() => editColor(color)}
+                    name="edit"
+                  />
+                </Button>
+                <Button compact icon circular color="red" floated="right">
+                  <Icon
+                    color="white"
+                    onClick={() => deleteColor(color)}
+                    name="delete"
+                  />
+                </Button>
+                <Divider hidden />
+                <Card.Header>{color.color}</Card.Header>
+                <Card.Meta>{color.code.hex}</Card.Meta>
+              </Card.Content>
+            </Card>
+          </>
         ))}
-      </ul>
-      {editing && (
-        <form onSubmit={saveEdit}>
-          <legend>edit color</legend>
-          <label>
-            color name:
-            <input
-              onChange={e =>
-                setColorToEdit({ ...colorToEdit, color: e.target.value })
-              }
-              value={colorToEdit.color}
-            />
-          </label>
-          <label>
-            hex code:
-            <input
-              onChange={e =>
-                setColorToEdit({
-                  ...colorToEdit,
-                  code: { hex: e.target.value }
-                })
-              }
-              value={colorToEdit.code.hex}
-            />
-          </label>
-          <div className="button-row">
-            <button type="submit">save</button>
-            <button onClick={() => setEditing(false)}>cancel</button>
-          </div>
-        </form>
-      )}
-      <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
-    </div>
+      </Segment>
+    </Segment.Group>
   );
 };
 
